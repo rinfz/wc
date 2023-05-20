@@ -2,10 +2,9 @@ enum Mode
   Cmd
   All
   Stdin
-  Unknown
 end
 
-mode = Mode::Unknown
+mode = nil
 args = ARGV
 
 command = nil
@@ -31,16 +30,23 @@ else
 end
 
 result = [] of Int64
+lines : Array(String)?
 
-if mode.all? || command == "-l"
-  result.push contents.lines.size
+if mode.all? || command == "-l" || command == "-w"
+  lines = contents.lines
 end
 
-if mode.all? || command == "-w"
-  words_per_line = contents.lines.map do |line|
-    line.strip.split.size
+if !lines.nil?
+  if mode.all? || command == "-l"
+    result.push lines.size
   end
-  result.push words_per_line.sum
+
+  if mode.all? || command == "-w"
+    words_per_line = lines.map do |line|
+      line.strip.split.size
+    end
+    result.push words_per_line.sum
+  end
 end
 
 if mode.all? || command == "-c"
