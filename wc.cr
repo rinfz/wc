@@ -46,16 +46,12 @@ end
 
 result = [] of Int64
 
-if flag_lines || flag_words
-  lines = contents.lines
+if flag_lines
+  result << contents.lines.size
+end
 
-  if flag_lines
-    result << lines.size
-  end
-
-  if flag_words
-    result << lines.map { |line| line.strip.split.size }.sum
-  end
+if flag_words
+  result << contents.split.size
 end
 
 if flag_bytes

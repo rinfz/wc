@@ -19,7 +19,7 @@ def options(): List[OptionDescr[Flag]] =
   :: {optionIds = 'w' :: Nil, optionNames = "words" :: Nil, argDescriptor = NoArg(Flag.Words), explanation = "count words"}
   :: Nil
 
-def encode(bytes: Array[Int8, r]): String \ IO =
+def decode(bytes: Array[Int8, r]): String \ IO =
   import static get java.nio.charset.StandardCharsets.UTF_8: Charset as csUtf8;
   import new java.lang.String(Array[Int8, r], Charset): ##java.lang.String as newByteString;
   newByteString(bytes, csUtf8())
@@ -27,12 +27,12 @@ def encode(bytes: Array[Int8, r]): String \ IO =
 def gatherStats(opts: List[Flag], bytes: Array[Int8, r]): List[Int32] \ IO =
   // lines, words, bytes, chars
   let needsAll = List.length(opts) == 0;
-  let needsEncode = needsAll or List.exists(x -> x != Flag.Bytes, opts);
-  let encoded = if (needsEncode) Some(encode(bytes)) else None;
-  let l = lazy (encoded |> Option.map(String.lines >> List.length));
-  let w = lazy (encoded |> Option.map(String.words >> List.length));
+  let needsDecode = needsAll or List.exists(x -> x != Flag.Bytes, opts);
+  let decoded = if (needsDecode) Some(decode(bytes)) else None;
+  let l = lazy (decoded |> Option.map(String.lines >> List.length));
+  let w = lazy (decoded |> Option.map(String.words >> List.length));
   let c = lazy (bytes   |> Array.length |> Some);
-  let m = lazy (encoded |> Option.map(String.length));
+  let m = lazy (decoded |> Option.map(String.length));
   let result = foreach (
     (f, v) <- List#{(Flag.Lines, l), (Flag.Words, w), (Flag.Bytes, c), (Flag.Characters, m)};
     if List.memberOf(f, opts) or needsAll
