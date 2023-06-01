@@ -7,3 +7,6 @@ wc.o
 wc.hi
 wc-factor
 *~
+cswc/.vs
+cswc/cswc/obj
+cswc/cswc/bin
