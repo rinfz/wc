@@ -1,65 +1,48 @@
-enum Mode {
-  Cmd,
-  All,
-  Stdin,
-  Unknown,
+import std;
+
+bool hasFlag(string[] args, string flag) {
+  return args.canFind(flag);
 }
 
-void main(string[] args) {
-  import std.stdio : writeln, stdin;
-  import std.file : readText;
-  import std.array : join;
-  import std.conv : to;
-  import std.string : splitLines, stripRight, split;
-  import std.range.primitives : walkLength;
-  import std.algorithm.iteration : map, sum;
-  import std.algorithm.searching : canFind;
-
-  Mode mode = Mode.Unknown;
-  string command;
-  string filename = "";
-
-  if (args.length == 2 && ["-c", "-l", "-w", "-m"].canFind(args[1])) {
-    mode = Mode.Stdin;
-    command = args[1];
-  } else if (args.length == 2) {
-    mode = Mode.All;
-    filename = args[1];
-  } else if (args.length == 3) {
-    mode = Mode.Cmd;
-    command = args[1];
-    filename = args[2];
-  } else {
-    mode = Mode.All;
+string getFilename(string[] args) {
+  auto filtered = args.filter!(a => !a.startsWith("-")).array;
+  if (filtered.length == 0) {
+    return "";
   }
+  return filtered.front();
+}
+
+void main(string[] args0) {
+  auto args = args0[1..$];
+
+  auto hasL = args.hasFlag("-l");
+  auto hasW = args.hasFlag("-w");
+  auto hasC = args.hasFlag("-c");
+  auto hasM = args.hasFlag("-m");
+  auto needsAll = !(hasL || hasW || hasC || hasM);
+  auto filename = args.getFilename();
 
   string contents;
   if (filename == "") {
-    contents = cast(string) stdin.byChunk(1024*1024).join;
+    contents = cast(string) stdin.byChunk(16*1024).join;
   } else {
     contents = filename.readText;
   }
 
   ulong[] result;
-  string[] lines;
-
-  if (mode == Mode.All || command == "-l" || command == "-w") {
-    lines = contents.splitLines;
+  if (hasL || needsAll) {
+    result ~= contents.splitLines.length;
   }
 
-  if (mode == Mode.All || command == "-l") {
-    result ~= lines.length;
+  if (hasW || needsAll) {
+    result ~= contents.split.length;
   }
 
-  if (mode == Mode.All || command == "-w") {
-    result ~= lines.map!(l => l.stripRight.split.length).sum;
-  }
-
-  if (mode == Mode.All || command == "-c") {
+  if ((hasC && !hasM) || needsAll) {
     result ~= contents.length;
   }
 
-  if (command == "-m") {
+  if (hasM) {
     result ~= contents.walkLength;
   }
 
