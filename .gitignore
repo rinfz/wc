@@ -10,3 +10,5 @@ wc-factor
 cswc/.vs
 cswc/cswc/obj
 cswc/cswc/bin
+backup/
+lib/
