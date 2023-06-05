@@ -8,7 +8,6 @@ multi sub MAIN(
     Bool :w($words) = False,
 ) {
     my $all = !($bytes || $lines || $chars || $words);
-
     my $bin_mode = $all || $bytes;
     my $raw_contents = $file ?? $file.IO.slurp(bin => $bin_mode) !! slurp(bin => $bin_mode);
     my $contents = $bin_mode ?? $raw_contents.decode !! $raw_contents;

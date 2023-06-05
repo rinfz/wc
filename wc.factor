@@ -15,15 +15,11 @@ IN: wc
 : any-flag? ( seq c -- ? )
   swap [ over matches-flag? ] any? swap drop ;
 
+: has-flag? ( seq c ? -- ? )
+  rot rot swap dup length 0 = [ 2drop ] [ swap any-flag? swap drop ] if ;
+
 : words ( str -- x )
   "\r\n\t " split [ length 0 > ] filter length ;
-
-: no-args? ( seq -- ? )
-  length 0 = ;
-
-: has-flag? ( seq c ? -- ? )
-  rot rot swap
-  dup length 0 = [ 2drop ] [ swap any-flag? swap drop ] if ;
 
 :: count-stuff ( args bytes -- vector )
    bytes utf8 <byte-reader> stream-contents :> text

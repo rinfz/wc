@@ -50,6 +50,7 @@
 (when (boolean=? has-m #t)
   (set! result (cons (string-length contents) result)))
 
-(displayln (format "\t~a ~a"
-                 (string-join (map number->string (reverse result)) "\t")
-                 (if (null? args) "" (first args))))
+(displayln
+  (format "\t~a ~a"
+    (string-join (map number->string (reverse result)) "\t")
+    (if (null? args) "" (first args))))

@@ -1,3 +1,5 @@
+.DS_Store
+.vscode
 big.txt
 test.txt
 results-table.md
@@ -13,3 +15,6 @@ cswc/cswc/bin
 backup/
 lib/
 hxwc/
+binaries/*
+!binaries/run.py
+slideshow.key
